@@ -25,6 +25,7 @@ services:
        - SENTRY_DSN=${SENTRY_DSN}
        - db_path=db
        - redis_path=redis://redis:6379/0
+       - CORS_ORIGIN_WHITELIST=http://localhost:3000
   frontend:
     build: /home/ubuntu1820/project/final/todo_frontend/todo_frontend/frontend
     container_name: frontend2
