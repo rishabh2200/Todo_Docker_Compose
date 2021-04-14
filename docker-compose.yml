@@ -1,0 +1,40 @@
+version: '3'
+
+services: 
+  db:
+    image: postgres
+    container_name: db2
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: /home/ubuntu1820/project/final/todo_backend/todo_backend/backend
+    container_name: web2
+    command: bash -c "celery -A backend.celery worker --loglevel=info --detach && newrelic-admin run-program python manage.py runserver 0.0.0.0:8000"
+    ports: 
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+       - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
+       - POSTGRES_DB=postgres
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=postgres
+       - SENDGRID_PASSWORD=${SENDGRID_PASSWORD}
+       - SENTRY_DSN=${SENTRY_DSN}
+       - db_path=db
+       - redis_path=redis://redis:6379/0
+  frontend:
+    build: /home/ubuntu1820/project/final/todo_frontend/todo_frontend/frontend
+    container_name: frontend2
+    command: npm start
+    ports:
+      - 3000:3000
+    environment:
+       - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
+       - REACT_APP_URL=${REACT_APP_URL}
+
+  redis:
+    image: redis:latest
+    container_name: redis2
