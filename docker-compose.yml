@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
-    build: /home/ubuntu1820/project/final/todo_backend/todo_backend/backend
+    build: /home/ubuntu1820/project/final/Todo-Platform/todo-platform/backend
     container_name: web2
     command: bash -c "celery -A backend.celery worker --loglevel=info --detach && newrelic-admin run-program python manage.py runserver 0.0.0.0:8000"
     ports: 
@@ -27,7 +27,7 @@ services:
        - redis_path=redis://redis:6379/0
        - CORS_ORIGIN_WHITELIST=http://localhost:3000
   frontend:
-    build: /home/ubuntu1820/project/final/todo_frontend/todo_frontend/frontend
+    build: /home/ubuntu1820/project/final/Todo-Webapp/todo-webapp/frontend
     container_name: frontend2
     command: npm start
     ports:
