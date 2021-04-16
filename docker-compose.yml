@@ -11,7 +11,8 @@ services:
   web:
     build: /home/ubuntu1820/project/final/Todo-Platform/todo-platform/backend
     container_name: web2
-    command: bash -c "celery -A backend.celery worker --loglevel=info --detach && newrelic-admin run-program python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "celery -A backend.celery worker --loglevel=info --detach && newrelic-admin run-program gunicorn --bind 0.0.0.0:8000 backend.wsgi"
+    # command: bash -c "celery -A backend worker -l info"
     ports: 
       - 8000:8000
     depends_on:
