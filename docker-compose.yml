@@ -4,12 +4,14 @@ services:
   db:
     image: postgres
     container_name: db2
+    volumes:
+      - /tmp/postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
-    build: /home/ubuntu1820/project/final/Todo-Platform/todo-platform/backend
+    build: ${PATH_TODO_FINAL}/Todo-Platform/todo-platform/backend
     container_name: web2
     command: bash -c "./start.sh"
     # command: bash -c "celery -A backend worker -l info"
@@ -28,7 +30,7 @@ services:
        - redis_path=redis://redis:6379/0
        - CORS_ORIGIN_WHITELIST=http://localhost:3000
   frontend:
-    build: /home/ubuntu1820/project/final/Todo-Webapp/todo-webapp/frontend
+    build: ${PATH_TODO_FINAL}/Todo-Webapp/todo-webapp/frontend
     container_name: frontend2
     command: npm start
     ports:
@@ -40,3 +42,20 @@ services:
   redis:
     image: redis:latest
     container_name: redis2
+
+  celery:
+    build: ${PATH_TODO_FINAL}/Todo-Platform/todo-platform/backend
+    command: celery -A backend worker -l info
+    environment:
+       - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
+       - POSTGRES_DB=postgres
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=postgres
+       - SENDGRID_PASSWORD=${SENDGRID_PASSWORD}
+       - SENTRY_DSN=${SENTRY_DSN}
+       - db_path=db
+       - redis_path=redis://redis:6379/0
+       - CORS_ORIGIN_WHITELIST=http://localhost:3000
+    depends_on:
+      - redis
+    
